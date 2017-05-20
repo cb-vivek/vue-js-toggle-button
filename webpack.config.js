@@ -1,5 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
+var ExtractTextPlugin = require("extract-text-webpack-plugin")
 
 module.exports = {
   entry: './src/index.js',
@@ -17,8 +18,10 @@ module.exports = {
         loader: 'vue-loader',
         options: {
           loaders: {
-            'scss': 'vue-style-loader!css-loader!sass-loader',
-            'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax'
+            'scss': ExtractTextPlugin.extract({
+              use: [{loader: 'css-loader'}, {loader: 'sass-loader'}],
+              fallback: 'vue-style-loader' // <- this is a dep of vue-loader, so no need to explicitly install if using npm3
+            }),
           }
         }
       },
@@ -60,6 +63,7 @@ module.exports = {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
-    })
+    }),
+    new ExtractTextPlugin("toggle_button.css")
   ]
 }
